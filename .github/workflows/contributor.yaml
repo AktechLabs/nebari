@@ -11,7 +11,7 @@ permissions:
 jobs:
   build:
     name: Build
-    if: ${{ github.event.issue.pull_request && (contains(github.event.comment.body, 'please do this')) }}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
     timeout-minutes: 80
     runs-on: ubuntu-latest
 
@@ -21,10 +21,22 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure git to use https
-        run: git config --global hub.protocol https
-
       - name: Checkout the branch from the PR that triggered the job
         run: hub pr checkout ${{ github.event.issue.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALPHA: ${{ secrets.ALPHA }}    
+      - name: Checkout the branch from the PR that triggered the job
+        run: echo "Hello ${{ secrets.FOO }}"
+
+#      - name: Trigger Kubernetes Tests
+#        uses: aktechlabs/nebari/.github/workflows/kubernetes_test.yaml@main
+#        with:
+#          pr_number: ${{ github.event.issue.number }}
+
+  kubernetes-tests:
+    name: Kubernetes Tests
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
+    uses: aktechlabs/nebari/.github/workflows/kubernetes_test.yaml@main
+    with:
+      pr_number: ${{ github.event.issue.number }}

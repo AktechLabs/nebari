@@ -24,6 +24,11 @@ on:
       - "nebari/**"
       - "setup.cfg"
       - "pyproject.yoml"
+  workflow_call:
+    inputs:
+      pr_number:
+        required: true
+        type: string
 
 jobs:
   test-kubernetes:
@@ -33,6 +38,11 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
+
+      - name: Checkout the branch from the PR that triggered the job
+        if: ${{ github.event_name == workflow_call }}
+        run: hub pr checkout pr ${{ inputs.pr_number }}
+
       - name: "Set NEBARI_IMAGE_TAG=main"
         run: |
           echo "NEBARI_IMAGE_TAG=main" >> "$GITHUB_ENV"
