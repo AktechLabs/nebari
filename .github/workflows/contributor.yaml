@@ -9,6 +9,28 @@ permissions:
   pull-requests: write
 
 jobs:
+  build:
+    name: Build
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
+    timeout-minutes: 80
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Contributor Tests Triggered by @${{ github.event.comment.user.login }}
+            - via [comment](${{ github.event.comment.html_url }})
+            - Build is running [here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          reactions: '+1'
+
   kubernetes-tests:
     name: Contributor
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
