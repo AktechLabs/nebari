@@ -33,21 +33,21 @@ jobs:
 
   kubernetes-tests:
     name: "Contributor ${{ github.event.issue.number }}"
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/bot run tests') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
     uses: aktechlabs/nebari/.github/workflows/kubernetes_test.yaml@release/2022.11.1
     with:
       pr_number: ${{ github.event.issue.number }}
 
   infracost-tests:
     name: "Contributor ${{ github.event.issue.number }}"
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/bot run tests') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
     uses: aktechlabs/nebari/.github/workflows/infracost.yml@release/2022.11.1
     with:
       pr_number: ${{ github.event.issue.number }}
 
   provider-tests:
     name: "Contributor ${{ github.event.issue.number }}"
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/bot run tests') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
     uses: aktechlabs/nebari/.github/workflows/test-provider.yaml@release/2022.11.1
     with:
       pr_number: ${{ github.event.issue.number }}
