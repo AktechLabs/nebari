@@ -1,4 +1,4 @@
-name: Contributor
+name: Contributor Tests trigger
 
 on:
   issue_comment:
@@ -11,7 +11,7 @@ permissions:
 jobs:
   build:
     name: Build
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/bot run tests') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
     timeout-minutes: 80
     runs-on: ubuntu-latest
 
@@ -21,7 +21,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create comment
+      - name: Create comment on the PR
         uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ github.event.issue.number }}
@@ -29,24 +29,24 @@ jobs:
             Contributor Tests Triggered by @${{ github.event.comment.user.login }}
             - via [comment](${{ github.event.comment.html_url }})
             - Build is running [here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          reactions: '+1'
+          reactions: 'rocket'
 
   kubernetes-tests:
-    name: Contributor
+    name: "Contributor ${{ github.event.issue.number }}"
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
     uses: aktechlabs/nebari/.github/workflows/kubernetes_test.yaml@release/2022.11.1
     with:
       pr_number: ${{ github.event.issue.number }}
 
   infracost-tests:
-    name: Contributor
+    name: "Contributor ${{ github.event.issue.number }}"
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
     uses: aktechlabs/nebari/.github/workflows/infracost.yml@release/2022.11.1
     with:
       pr_number: ${{ github.event.issue.number }}
 
   provider-tests:
-    name: Contributor
+    name: "Contributor ${{ github.event.issue.number }}"
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'please do this') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
     uses: aktechlabs/nebari/.github/workflows/test-provider.yaml@release/2022.11.1
     with:
