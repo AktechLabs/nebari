@@ -1,0 +1,30 @@
+name: Contributor
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    name: Build
+    if: ${{ github.event.issue.pull_request && (contains(github.event.comment.body, 'please do this')) }}
+    timeout-minutes: 80
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git to use https
+        run: git config --global hub.protocol https
+
+      - name: Checkout the branch from the PR that triggered the job
+        run: hub pr checkout ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
