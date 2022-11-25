@@ -8,10 +8,13 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  RUN_CHECK: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/bot run tests') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
+
 jobs:
   build:
     name: Build
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/bot run tests') && contains(fromJson('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)}}
+    if: env.RUN_CHECK
     timeout-minutes: 80
     runs-on: ubuntu-latest
 
